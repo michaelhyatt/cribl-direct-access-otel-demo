@@ -356,10 +356,10 @@ services:
         condition: service_started
       load-generator:
         condition: service_started
-      jaeger:
-        condition: service_started
-      grafana:
-        condition: service_started
+      # jaeger:
+      #   condition: service_started
+      # grafana:
+      #   condition: service_started
       flagd-ui:
         condition: service_started
     dns_search: ""
@@ -695,6 +695,8 @@ services:
   # ********************
   # Jaeger
   jaeger:
+    profiles:
+      - monitoring
     image: ${JAEGERTRACING_IMAGE}
     container_name: jaeger
     command:
@@ -717,6 +719,8 @@ services:
 
   # Grafana
   grafana:
+    profiles:
+      - monitoring  
     image: ${GRAFANA_IMAGE}
     container_name: grafana
     deploy:
@@ -752,11 +756,11 @@ services:
     ports:
       - "${OTEL_COLLECTOR_PORT_GRPC}"
       - "${OTEL_COLLECTOR_PORT_HTTP}"
-    depends_on:
-      jaeger:
-        condition: service_started
-      opensearch:
-        condition: service_healthy
+    # depends_on:
+    #   jaeger:
+    #     condition: service_started
+    #   opensearch:
+    #     condition: service_healthy
     logging: *logging
     environment:
       - ENVOY_PORT
@@ -764,12 +768,13 @@ services:
       - OTEL_COLLECTOR_HOST
       - OTEL_COLLECTOR_PORT_GRPC
       - OTEL_COLLECTOR_PORT_HTTP
-      - ELASTIC_AGENT_OTEL
-      - ELASTICSEARCH_ENDPOINT
-      - ELASTICSEARCH_API_KEY
+      - SPLUNK_HEC_ENDPOINT
+      - SPLUNK_HEC_TOKEN
 
   # Prometheus
   prometheus:
+    profiles:
+      - monitoring
     image: ${PROMETHEUS_IMAGE}
     container_name: prometheus
     command:
@@ -795,6 +800,8 @@ services:
 
   # OpenSearch
   opensearch:
+    profiles:
+      - monitoring
     image: ${OPENSEARCH_IMAGE}
     container_name: opensearch
     deploy:
