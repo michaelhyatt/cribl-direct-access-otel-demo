@@ -110,7 +110,7 @@ jobs:
             setup-qemu: true
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - name: Load environment variables from .env file
@@ -160,7 +160,7 @@ jobs:
             max-parallelism = 2
       - name: Matrix Build and push demo images
         if: steps.check_changes.outputs.skip == 'false'
-        uses: docker/build-push-action@v5.0.0
+        uses: docker/build-push-action@v6.18.0
         with:
           context: ${{ matrix.file_tag.context }}
           file: ${{ matrix.file_tag.file }}
